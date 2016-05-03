@@ -1,0 +1,5 @@
+C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\DaoLib\bin\Debug\DaoLib.dll
+C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\DaoLib\bin\Debug\DaoLib.pdb
+C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\DaoLib\obj\Debug\LibDao.csprojResolveAssemblyReference.cache
+C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\DaoLib\obj\Debug\DaoLib.dll
+C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\DaoLib\obj\Debug\DaoLib.pdb
