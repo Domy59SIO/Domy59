@@ -57,10 +57,11 @@ namespace PeuplerTables
         };
 
         // liste des valeurs pour peupler la table matériel
+        // TypeMateriel,NumeroSerie,NumeroTel,Imei,IdGoogle,FkLoginE,EtatMateriel
         private String[] listeMateriels = new String[]{
-            "Smartphone LG#12345678910#0645342312#352600000000#hggkhghhjbxhjqslhqudchlchdslchldshlshclsh#phenri#stock#",
-            "Smartphone Archos#009876543212####phenri#stock#",
-            "Smartphone Asus#4567890123456####phenri#stock#"
+            "Smartphone LG#12345678910#0645342312#358950050955750#hggkhghhjbxhjqslhqudchlchdslchldshlshclsh#phenri#stock#",
+            "Smartphone Archos#009876543212##000000000000000##phenri#stock#",
+            "Smartphone Asus#4567890123456##000000000000000##phenri#stock#"
     };
 
         // liste des valeurs pour peupler la table Intervention
@@ -387,18 +388,18 @@ namespace PeuplerTables
         ClassePeuplementTables()
         {
             // DIFFERENTS APPELS DE METHODES POSSIBLES
-            peuplerTableEmploye();
-            peuplerTableClient();
-            listerLesClients();
+            //peuplerTableEmploye();
+            //peuplerTableClient();
+            //listerLesClients();
             peuplerTableMateriel();
-            listerLesMateriels();
-            peuplerTableTechnicien();
-            peuplerTablePositionTechnicien();
-            peuplerTableSessionTechnicien();
-            recupererListeDesTechniciensActifs();
-            peuplerTableIntervention();
-            listerInterventions();
-            listerInterventionsTechnicienDate();
+            //listerLesMateriels();
+            //peuplerTableTechnicien();
+            //peuplerTablePositionTechnicien();
+            //peuplerTableSessionTechnicien();
+            //recupererListeDesTechniciensActifs();
+            //peuplerTableIntervention();
+            //listerInterventions();
+            //listerInterventionsTechnicienDate();
         }
         //*****************************************************************************************************************
         static void Main(string[] args)

@@ -56,17 +56,17 @@
             // 
             // textBoxNom
             // 
-            this.textBoxNom.Enabled = false;
             this.textBoxNom.Location = new System.Drawing.Point(235, 74);
             this.textBoxNom.Name = "textBoxNom";
+            this.textBoxNom.ReadOnly = true;
             this.textBoxNom.Size = new System.Drawing.Size(100, 20);
             this.textBoxNom.TabIndex = 1;
             // 
             // textBoxPrenom
             // 
-            this.textBoxPrenom.Enabled = false;
             this.textBoxPrenom.Location = new System.Drawing.Point(235, 112);
             this.textBoxPrenom.Name = "textBoxPrenom";
+            this.textBoxPrenom.ReadOnly = true;
             this.textBoxPrenom.Size = new System.Drawing.Size(100, 20);
             this.textBoxPrenom.TabIndex = 2;
             // 

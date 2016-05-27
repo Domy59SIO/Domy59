@@ -186,6 +186,7 @@
             this.mTxtBoxNumtel.PromptChar = ' ';
             this.mTxtBoxNumtel.Size = new System.Drawing.Size(70, 20);
             this.mTxtBoxNumtel.TabIndex = 53;
+            this.mTxtBoxNumtel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mTxtBoxNumtel_MouseClick);
             // 
             // AjouterMaterielForm
             // 

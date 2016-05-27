@@ -145,5 +145,11 @@ namespace Dispatcher
                 btnModifierMateriel.Enabled = true;
             }
         }
+        //**************************************************************************************************
+        // permet de placer le curseur de saisie a gauche de la maskTextBox
+        private void mTxtBoxNumtel_MouseClick(object sender, MouseEventArgs e)
+        {
+            mTxtBoxNumtel.SelectionStart = 0;
+        }
     }
 }

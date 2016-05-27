@@ -245,7 +245,6 @@
             // 
             // timerRafraichissementPositionTechnicien
             // 
-            this.timerRafraichissementPositionTechnicien.Enabled = true;
             this.timerRafraichissementPositionTechnicien.Interval = 15000;
             this.timerRafraichissementPositionTechnicien.Tick += new System.EventHandler(this.timerRafraichissementPositionTechnicien_Tick);
             // 
@@ -262,7 +261,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(804, 571);
+            this.ClientSize = new System.Drawing.Size(804, 572);
             this.Controls.Add(this.ListBoxClients);
             this.Controls.Add(this.MapMain);
             this.Controls.Add(this.btnRefresh);

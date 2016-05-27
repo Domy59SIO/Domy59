@@ -213,12 +213,14 @@
             this.mTxtBoxNumtel.PromptChar = ' ';
             this.mTxtBoxNumtel.Size = new System.Drawing.Size(70, 20);
             this.mTxtBoxNumtel.TabIndex = 71;
+            this.mTxtBoxNumtel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mTxtBoxNumtel_MouseClick);
             // 
             // txtBoxAffectationMat
             // 
             this.txtBoxAffectationMat.Location = new System.Drawing.Point(492, 177);
             this.txtBoxAffectationMat.MaxLength = 17;
             this.txtBoxAffectationMat.Name = "txtBoxAffectationMat";
+            this.txtBoxAffectationMat.ReadOnly = true;
             this.txtBoxAffectationMat.Size = new System.Drawing.Size(189, 20);
             this.txtBoxAffectationMat.TabIndex = 72;
             // 

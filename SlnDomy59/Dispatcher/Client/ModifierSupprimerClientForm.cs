@@ -116,7 +116,9 @@ namespace Dispatcher
                         }
                         clientSelectionne.Email = email;
                         clientSelectionne.Latitude = mTxtBoxLatitude.Text;
+                        clientSelectionne.Latitude = clientSelectionne.Latitude.Replace(",", ".");
                         clientSelectionne.Longitude = mTxtBoxLongitude.Text;
+                        clientSelectionne.Longitude = clientSelectionne.Longitude.Replace(",", ".");
                         // récupération image
                         if (pictureBoxImageClient.Image == null)
                             clientSelectionne.Photoent = new Byte[0];  // null
@@ -248,11 +250,6 @@ namespace Dispatcher
         private void mTxtBoxCodePostal_MouseClick(object sender, MouseEventArgs e)
         {
             mTxtBoxCodePostal.SelectionStart = 0;
-        }
-
-        private void mTxtBoxLatitude_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
-        {
-
         }
         //**************************************************************************************************
     }

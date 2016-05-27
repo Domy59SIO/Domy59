@@ -12,8 +12,10 @@ namespace Dispatcher
     public partial class DispatcherForm : Form
     {
         const bool VIA_ACTIVE_DIRECTORY = false; // true si application fonctionne sur AD,ATTENTION modification non automatique de la connexion à la BDD
-        String VersionProg = "1.0";
-        String VersionSql = "0_9";
+        String VersionProg = "1.2";
+        String VersionSql = "1.0";
+
+        bool connexionBddValide = false; // pour tester si on a détecté une connexion bdd au lancement de l'application
 
         GMapOverlay overlayOne;
         // Réferences d'objet utilisés pour la gestion des marqueurs de techniciens
@@ -30,97 +32,12 @@ namespace Dispatcher
         public DispatcherForm()
         {
             InitializeComponent();
-            //--------------------------------------------------------------------------------------------
-            Employe employe = new Employe();
-            // récupération du groupe de l'utilisateur
-            if(VIA_ACTIVE_DIRECTORY == false)
-            {
-                // A MODIFIER POUR LECTURE VIA L'AD
-                // Jeu de test
-                UtilisateurConnecte.Login = employe.LoginE = "mcardona";
-                UtilisateurConnecte.Prenom = employe.Prenom= "Marie";
-                UtilisateurConnecte.Nom=employe.Nom = "Cardona";
-                //UtilisateurConnecte.Groupe = "Dispatcher";
-                UtilisateurConnecte.Groupe = employe.Groupe = "Administration";
-               // UtilisateurConnecte.Groupe = "Commercial";
-               // UtilisateurConnecte.Groupe = "Informatique";
-            }
-            else
-            {
-                // récupération information employé connecté sur AD
-                InfoActiveDirectory infoActiveDirectory = new InfoActiveDirectory();               
-                employe=infoActiveDirectory.getEmployeFromAD(Environment.UserName);                       
-            }
-            if (employe != null)
-            {
-                UtilisateurConnecte.Groupe = employe.Groupe;
-                UtilisateurConnecte.Login = employe.LoginE;
-                // on persiste cet employé en BDD local
-                using (EmployeManager employeManager = new EmployeManager())
-                {
-                    employeManager.ajoutModifEmploye(ref employe);
-                }
-            }      
-            //--------------------------------------------------------------------------------------------
-            // Gestion des droits au niveau des menus
-            // Principe : on interdit tout et on valide un a un (comme le filtrage réseau)
-            switch (UtilisateurConnecte.Groupe)
-            {
-                case ("Dispatcher"):
-                    {
-                        // menu client
-                        toolStripMenuItemClient.Enabled = true;
-                        // menu intervention
-                        toolStripMenuItemIntervention.Enabled = true;
-                        ajouterToolStripMenuItemIntervention.Enabled = true;
-                        supprimerToolStripMenuItemIntervention.Enabled = true;
-                        modifierToolStripMenuItem.Enabled = true;
-                        aperçuToolStripMenuItem.Enabled = true;
-                        // menu SMS
-                        envoiSMSToolStripMenuItem.Enabled = true;
-                    }
-                    break;
-                case ("Commercial"):
-                    {
-                        toolStripMenuItemClient.Enabled = true;
-                        toolStripMenuItemIntervention.Enabled = true;
-                        aperçuToolStripMenuItem.Enabled = true;
-                    }
-                    break;
-                case ("Informatique"):
-                    {
-                        gestionMatérielToolStripMenuItem.Enabled = true;
-                    }
-                    break;
-                case ("Administration"):
-                    {
-                        // menu client
-                        toolStripMenuItemClient.Enabled = true;
-                        // menu intervention
-                        toolStripMenuItemIntervention.Enabled = true;
-                        ajouterToolStripMenuItemIntervention.Enabled = true;
-                        supprimerToolStripMenuItemIntervention.Enabled = true;
-                        modifierToolStripMenuItem.Enabled = true;
-                        aperçuToolStripMenuItem.Enabled = true;
-                        // menu SMS
-                        envoiSMSToolStripMenuItem.Enabled = true;
-                        // menu Matériel
-                        gestionMatérielToolStripMenuItem.Enabled = true;
-                        // menu Technicien
-                        TechnicienToolStripMenuItem.Enabled = true;
-                    }
-                    break;
-                default:
-                    {
-                        MessageBox.Show("Vous n'appartenez pas à un groupe autorisé à utiliser ce logiciel");
-                    }
-                    break;
-            }
-            //--------------------------------------------------------------------------------------------
-            // initialisation des élements de gestion de la carte de position des techniciens et des clients
+            testValideConnexionBdd();
+            recupererUtilisateurConnecte();
 
-            // contiendra les techniciens en déplacement
-            listTechnicienItinerant = new List<VTechnicienItinerant>(); 
+            // initialisation des élements de gestion de la carte de position des techniciens et des clients
+            // listTechnicienItinerant contiendra les techniciens en déplacement
+            listTechnicienItinerant = new List<VTechnicienItinerant>();
             // Les dictionnaires qui permettont d'associer un technicien à son marqueur
             dicTechMark = new Dictionary<String, GMapMarker>();
             dicTechMarkPre = new Dictionary<String, GMapMarker>();
@@ -131,38 +48,176 @@ namespace Dispatcher
 
             menuStripDispatcher.Enabled = true;
             this.Text = this.Text + "  " + "Version Prog : " + VersionProg + "  Version SQL : " + VersionSql;
+            //--------------------------------------------------------------------------------------------
         }
         //**************************************************************************************************
-        // Chargement de la carte pour placer les techniciens et les clients
-        private void Map_Load(object sender, EventArgs e)
+        // vérifie si la base de donnée répond
+         void testValideConnexionBdd()
         {
-            //utilisation de la map fourni par google
-            MapMain.MapProvider = GoogleMapProvider.Instance;
-            MapMain.MinZoom = 1;    //defini le zoom max et min
-            MapMain.MaxZoom = 20;
-
-            //prend dans les serveurs les infos non chargé et dans le cache les infos deja chargées
-            MapMain.Manager.Mode = AccessMode.ServerAndCache;
-            GMapProvider.WebProxy = null; // pas de proxy
-
-            overlayOne = new GMapOverlay(MapMain, "OverlayOne");//associe un overlay a la map
-            // Uniquement pour afficher la carte
-            MapMain.Overlays.Add(overlayOne);//ajoute l'overlay a la map
-            GMapMarker gMapMarker1 = new GMap.NET.WindowsForms.Markers.GMapMarkerGoogleGreen(new PointLatLng(
-                        Convert.ToDouble("50.640866", new CultureInfo("en-Gb")),
-                        Convert.ToDouble("3.027394", new CultureInfo("en-Gb"))));// nouveau marker avec la position d'un technicien
-
-            overlayOne.Markers.Add(gMapMarker1);
-            
-            //ShowTechn();//ajoute les Markers par rapport aux technicienx connectés
-
-            MapMain.ZoomAndCenterMarkers(overlayOne.Id); //centre la map par rapport au markers
-            MapMain.Zoom = 10;
-            overlayOne.Markers.Clear();
-            timerRafraichissementPositionTechnicien.Start();//timer pour replacer les markers des techniciens en temp reel.
-            ShowCli();
-            timerRafraichissementPositionTechnicien_Tick(this,EventArgs.Empty);
+            // test connection BDD
+            try
+            {
+                ConnexionSqlServer connexionSqlServer = new ConnexionSqlServer();
+                if (connexionSqlServer.Connexion != null)
+                {
+                    connexionBddValide = true;
+                    timerRafraichissementPositionTechnicien.Enabled = true;
+                }
+            }
+            catch
+            {
+                connexionBddValide = false;
+            }
         }
+
+         //**************************************************************************************************
+        // récupération propriétés utilisateur connecté sur le pc
+         void recupererUtilisateurConnecte()
+         {
+             if (connexionBddValide)
+             {
+                 Employe employe = new Employe();
+                 // récupération du groupe de l'utilisateur
+                 if (VIA_ACTIVE_DIRECTORY == false)
+                 {
+                     // on est en local
+                     // Jeu de test
+                     UtilisateurConnecte.Login = employe.LoginE = "phenri";
+                     UtilisateurConnecte.Prenom = employe.Prenom = "Pierre";
+                     UtilisateurConnecte.Nom = employe.Nom = "Henri";
+                     //UtilisateurConnecte.Groupe = employe.Groupe = "Dispatcher";
+                     //UtilisateurConnecte.Login = employe.LoginE = "mcardona";
+                     //UtilisateurConnecte.Prenom = employe.Prenom= "Marie";
+                     //UtilisateurConnecte.Nom=employe.Nom = "Cardona";
+                     UtilisateurConnecte.Groupe = employe.Groupe = "Administration";
+                     // UtilisateurConnecte.Groupe = employe.Groupe = "Commercial";
+                     // UtilisateurConnecte.Groupe = employe.Groupe= "Informatique";
+                 }
+                 else
+                 {
+                     // on est sur l'AD
+                     // récupération information employé connecté sur AD
+                     InfoActiveDirectory infoActiveDirectory = new InfoActiveDirectory();
+                     employe = infoActiveDirectory.getEmployeFromAD(Environment.UserName);
+                 }
+                 if (employe != null)
+                 {
+                     UtilisateurConnecte.Groupe = employe.Groupe;
+                     UtilisateurConnecte.Login = employe.LoginE;
+                     // on persiste cet employé en BDD local
+                     try
+                     {
+                         using (EmployeManager employeManager = new EmployeManager())
+                         {
+                             employeManager.ajoutModifEmploye(ref employe);
+                         }
+                     }
+                     catch (Exception ex)
+                     {
+                         MessageBox.Show(ex.Message);
+                     }
+                 }
+                 //--------------------------------------------------------------------------------------------
+                 // Gestion des droits au niveau des menus
+                 // Principe : on interdit tout et on valide un a un (comme le filtrage réseau)
+                 switch (UtilisateurConnecte.Groupe)
+                 {
+                     case ("Dispatcher"):
+                         {
+                             // menu client
+                             toolStripMenuItemClient.Enabled = true;
+                             // menu intervention
+                             toolStripMenuItemIntervention.Enabled = true;
+                             ajouterToolStripMenuItemIntervention.Enabled = true;
+                             supprimerToolStripMenuItemIntervention.Enabled = true;
+                             modifierToolStripMenuItem.Enabled = true;
+                             aperçuToolStripMenuItem.Enabled = true;
+                             // menu SMS
+                             envoiSMSToolStripMenuItem.Enabled = true;
+                         }
+                         break;
+                     case ("Commercial"):
+                         {
+                             toolStripMenuItemClient.Enabled = true;
+                             toolStripMenuItemIntervention.Enabled = true;
+                             aperçuToolStripMenuItem.Enabled = true;
+                         }
+                         break;
+                     case ("Informatique"):
+                         {
+                             gestionMatérielToolStripMenuItem.Enabled = true;
+                         }
+                         break;
+                     case ("Administration"):
+                         {
+                             // menu client
+                             toolStripMenuItemClient.Enabled = true;
+                             // menu intervention
+                             toolStripMenuItemIntervention.Enabled = true;
+                             ajouterToolStripMenuItemIntervention.Enabled = true;
+                             supprimerToolStripMenuItemIntervention.Enabled = true;
+                             modifierToolStripMenuItem.Enabled = true;
+                             aperçuToolStripMenuItem.Enabled = true;
+                             // menu SMS
+                             envoiSMSToolStripMenuItem.Enabled = true;
+                             // menu Matériel
+                             gestionMatérielToolStripMenuItem.Enabled = true;
+                             // menu Technicien
+                             TechnicienToolStripMenuItem.Enabled = true;
+                         }
+                         break;
+                     default:
+                         {
+                             MessageBox.Show("Vous n'appartenez pas à un groupe autorisé à utiliser ce logiciel");
+                         }
+                         break;
+                     //--------------------------------------------------------------------------------------------
+                 }
+             }
+             else
+             {
+                 MessageBox.Show("Arrêt de l'application car pas de connexion BDD");
+             }
+         }
+
+        //**************************************************************************************************
+        // Chargement de la carte pour placer les techniciens et les clients
+         private void Map_Load(object sender, EventArgs e) // code appelé au chargement de la carte
+         {
+             if (connexionBddValide)
+             {
+                 //utilisation de la map fourni par google
+                 MapMain.MapProvider = GoogleMapProvider.Instance;
+                 MapMain.MinZoom = 1;    //defini le zoom max et min
+                 MapMain.MaxZoom = 20;
+
+                 //prend dans les serveurs les infos non chargé et dans le cache les infos deja chargées
+                 MapMain.Manager.Mode = AccessMode.ServerAndCache;
+                 GMapProvider.WebProxy = null; // pas de proxy
+
+                 overlayOne = new GMapOverlay(MapMain, "OverlayOne");//associe un overlay a la map
+                 // Uniquement pour afficher la carte
+                 MapMain.Overlays.Add(overlayOne);//ajoute l'overlay a la map
+                 GMapMarker gMapMarker1 = new GMap.NET.WindowsForms.Markers.GMapMarkerGoogleGreen(new PointLatLng(
+                             Convert.ToDouble("50.640866", new CultureInfo("en-Gb")),
+                             Convert.ToDouble("3.027394", new CultureInfo("en-Gb"))));// nouveau marker avec la position d'un technicien
+
+                 overlayOne.Markers.Add(gMapMarker1);
+
+                 //ShowTechn();//ajoute les Markers par rapport aux technicienx connectés
+
+                 MapMain.ZoomAndCenterMarkers(overlayOne.Id); //centre la map par rapport au markers
+                 MapMain.Zoom = 10;
+                 overlayOne.Markers.Clear();
+                 timerRafraichissementPositionTechnicien.Start();//timer pour replacer les markers des techniciens en temp reel.
+                 ShowCli();
+                 timerRafraichissementPositionTechnicien_Tick(this, EventArgs.Empty);
+             }
+             else
+             {
+                 Application.Exit(); // on ferme l'application car pas de connexion BDD
+             }
+         }
 
         //**************************************************************************************************
         // méthode qui replace tous les marqeurs de techniciens sur la carte et qui reconstruit la listBox
@@ -362,11 +417,14 @@ namespace Dispatcher
         //**************************************************************************************************
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            overlayOne.Markers.Clear();
-            ListBoxTechniciens.Items.Clear();//--> vide  la listBox    
-            ShowTechn(); 
-            ListBoxClients.Items.Clear();//--> vide  la listBox    
-            ShowCli();   
+            if (connexionBddValide)
+            {
+                overlayOne.Markers.Clear();
+                ListBoxTechniciens.Items.Clear();//--> vide  la listBox    
+                ShowTechn();
+                ListBoxClients.Items.Clear();//--> vide  la listBox    
+                ShowCli();
+            }
         }
         //**************************************************************************************************
         // GESTION DES MENUS 

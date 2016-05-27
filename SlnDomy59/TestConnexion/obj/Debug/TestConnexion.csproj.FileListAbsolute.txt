@@ -1,8 +1,0 @@
-C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\TestConnexion\bin\Debug\TestConnexion.exe.config
-C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\TestConnexion\bin\Debug\TestConnexion.exe
-C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\TestConnexion\bin\Debug\TestConnexion.pdb
-C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\TestConnexion\bin\Debug\DaoLib.dll
-C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\TestConnexion\bin\Debug\DaoLib.pdb
-C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\TestConnexion\obj\Debug\TestConnexion.csprojResolveAssemblyReference.cache
-C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\TestConnexion\obj\Debug\TestConnexion.exe
-C:\Users\Tib\Desktop\Efficom\PPE\PPE 3\Project\ProjetDomy59-master\SlnDomy59\TestConnexion\obj\Debug\TestConnexion.pdb

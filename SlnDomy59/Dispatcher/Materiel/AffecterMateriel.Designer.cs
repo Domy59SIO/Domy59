@@ -74,6 +74,7 @@
             this.mTxtBoxNumtel.PromptChar = ' ';
             this.mTxtBoxNumtel.Size = new System.Drawing.Size(70, 20);
             this.mTxtBoxNumtel.TabIndex = 77;
+            this.mTxtBoxNumtel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mTxtBoxNumtel_MouseClick);
             // 
             // lblNumeroTel
             // 
@@ -90,6 +91,7 @@
             this.textBoxNumSerie.Location = new System.Drawing.Point(15, 241);
             this.textBoxNumSerie.MaxLength = 17;
             this.textBoxNumSerie.Name = "textBoxNumSerie";
+            this.textBoxNumSerie.ReadOnly = true;
             this.textBoxNumSerie.Size = new System.Drawing.Size(189, 20);
             this.textBoxNumSerie.TabIndex = 73;
             // 
@@ -98,6 +100,7 @@
             this.textBoxTypeMateriel.Location = new System.Drawing.Point(15, 199);
             this.textBoxTypeMateriel.MaxLength = 10;
             this.textBoxTypeMateriel.Name = "textBoxTypeMateriel";
+            this.textBoxTypeMateriel.ReadOnly = true;
             this.textBoxTypeMateriel.Size = new System.Drawing.Size(189, 20);
             this.textBoxTypeMateriel.TabIndex = 72;
             // 
